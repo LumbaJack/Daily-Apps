@@ -1,0 +1,32 @@
+{
+    "translations": [
+        {
+            "title": "Daily Fails",
+			"mainPageTitle": "Fail Picture",
+			"mainPageDateText": "Date of the picture:",
+			"mainPageShareButton": "Share",
+			"mainPageInfoButton": "Info",
+			"mainPageRequestButton": "Suggest",
+			"infoPageHeaderTitle": "About",
+			"version": "Version 1.3.0",
+			"infotitle" : "Daily Fails",
+			"infoPageSubmitText": "Have a funny fail picture like today's.",
+			"infoPageSubmitLink": "Submit an image",
+			"infoPageCopyrightText": "We are a user based application. Images may be used subject to copyright.",
+			"infoPageCopyrightLink": "Report an image or problem.",
+			"infoPageCloseBto": "Close",
+			"uglySuggestAlertTitle": "Alert",
+			"uglySuggestAlert": "Suggest submission failed",
+			"uglySuggestAlertBto": "OK",
+			"errorInternetAlertTitle": "Error, please try again",
+			"errorInternetAlertText": "Error downloading the images from the internet. Please check internet connectivity.",
+			"errorInternetAlertBto": "Close",
+			"uglySuggest":"Thanks for your fail photo, check every day to see if your photo is there.",
+			"uglySuggestTitle":"Upload successful",
+			"uglySuggestBto":"OK",
+			"errorNoInternetAlertText": "No internet connection",
+			"errorNoInternetAlertTitle": "Please try again",
+			"errorNoInternetAlertBto": "Exit"
+         }
+    ]
+}

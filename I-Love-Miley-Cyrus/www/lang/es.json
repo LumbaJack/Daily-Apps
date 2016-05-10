@@ -1,0 +1,33 @@
+{
+    "translations": [
+        {
+            "title": "Amo A Miley Cirus",
+
+			"mainPageTitle": "Miley Cirus",
+            "mainPageDateText": "Fecha de la imagen:",
+			"mainPageShareButton": "Compartir ",
+			"mainPageInfoButton": "Info",
+			"mainPageRequestButton": "Sugiere",
+			"infoPageHeaderTitle": "Acerca De",
+			"version": "Versión 1.3.0",
+			"infotitle" : "Amo A Miley Cirus",
+			"infoPageSubmitText": "Tienes una buena imagen de Miley Cirus como la de hoy.",
+			"infoPageSubmitLink": "Envianos una imagen",
+			"infoPageCopyrightText": "Somos una aplicación basada en el usuario. Las imágenes pueden ser utilizadas con sujeción a los derechos de autor.",
+			"infoPageCopyrightLink": "Reportar sobre una imagen o un problema.",
+			"infoPageCloseBto": "Cerrar",
+			"uglySuggestAlertTitle": "Alerta",
+			"uglySuggestAlert": "Error al enviar la imagen",
+			"uglySuggestAlertBto": "OK",
+			"errorInternetAlertTitle": "Error",
+			"errorInternetAlertText": "Error al descargar las imágenes del internet. Por favor verifique la conectividad al Internet.",
+			"errorInternetAlertBto": "Cerrar",
+			"errorNoInternetAlertText": "Su equipo no esta conectado a Internet",
+			"errorNoInternetAlertTitle": "Please try again",
+			"errorNoInternetAlertBto": "Cerrar",
+			"uglySuggest":"Gracias por tu foto, revisa cada dia y si tu foto es realmente buena la veras publicada.",
+			"uglySuggestTitle":"Envio Exitoso",
+			"uglySuggestBto":"OK"
+		}
+    ]
+}

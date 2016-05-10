@@ -1,0 +1,191 @@
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1.0, maximum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+	<link rel="stylesheet" type="text/css" href="css/ugly.min.css" />
+	<link rel="stylesheet" type="text/css" href="js/jquery.mobile.structure-1.3.2.min.css" />
+        <link rel="stylesheet" type="text/css" href="css/tolito-1.0.5.min.css">
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/ShortcutPlugin.js"></script>
+        <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+        <script type="text/javascript" src="js/jquery.mobile-1.3.2.min.js" ></script>
+        <script type="text/javascript" src="js/app.js"></script>
+        <script type="text/javascript" src="js/spin.min.js"></script>
+        <script type="text/javascript" src="js/swipe.js"></script>
+        <script type="text/javascript" src="js/plugins/SocialSharing.js"></script>
+        <script type="text/javascript" src="js/tolito-1.0.5.min.js"></script>
+        <script type="text/javascript" src="js/localization.js"></script>
+        <script type="text/javascript">
+            var curelemt = null;
+            var opts = { lines: 13, length: 20, width: 10, radius: 30, corners: 1, rotate: 0, direction: 1, color: '#FFF', speed: 1, trail: 60, shadow: true, hwaccel: true, className: 'spinner', zIndex: 100, top: '50%', left: 'auto' };
+            var spinner;
+            var imglst = null;
+            var txturl = "https://dl.dropboxusercontent.com/u/234084242/daily-apps/daily-pictures/Dogs/list.txt";
+            var tolito = null;
+
+            
+            function onFullyLoaded() {
+                Localization.initialize('English');
+                $("#mainPageShareButton").click(function() { share(); });
+                $("#mainPageRequestButton").click(function() {
+                    navigator.camera.getPicture(
+                        uploadPhoto,
+                        function(message) { },
+                        {
+                            quality         : 50,
+                            destinationType : navigator.camera.DestinationType.FILE_URI,
+                            sourceType      : navigator.camera.PictureSourceType.PHOTOLIBRARY
+                        }
+                    );
+                });
+                app.addBanner();
+
+                checkConnection();
+                try {
+                    if(!window.localStorage.getItem('shortcut')) {
+                        window.plugins.Shortcut.CreateShortcut("Daily Dogs", function(){}, function(){} );
+                        window.localStorage.setItem('shortcut', true);
+                    }
+                } catch (err) {console.log(err)};
+
+
+                //Register for push notifications
+                pushNotification = window.plugins.pushNotification;
+                pushNotification.register(app.successHandler, app.errorHandler,{"senderID":"219777409116","ecb":"app.onNotificationGCM"});
+                update();
+            } 
+
+            function update() {
+                var target = document.getElementById('spinner');
+                spinner = new Spinner(opts).spin(target);
+                $.ajax({
+                    dataType: "json",
+                    url: txturl,
+                    error: function (textStatus, errorThrown) {
+                        showAlert($("#errorInternetAlertText").html(),exitapp, $("#errorInternetAlertTitle").html(), $("#errorInternetAlertButton").html());
+                    },
+                    success: function (data){
+                        $("#slider").empty();
+                        $("#slider").append("<div id='swipe-wrap' class='swipe-wrap'></div>");
+                        imglst = data.list;
+                        $.each(data.list,function(index, row){
+                              if (curelemt === null) {curelemt = row.url; $("#showdate").html(imglst[index].date); }
+                              $("#swipe-wrap").append("<div><img src='" + row.url +"' id='img" + row.url + "'></div>");
+                        });
+                        spinner.stop();
+                        var elem = document.getElementById('slider');
+                        window.mySwipe = Swipe(elem, {
+                              // startSlide: 4,
+                              // auto: 3000,
+                               continuous: false,
+                              // disableScroll: true,
+                              // stopPropagation: true,
+                              // callback: function(index, element) {},
+                              transitionEnd: function(index, element) { curelemt = $(element).children('img').attr('src'); $("#showdate").html(imglst[index].date); }
+                        });
+                     },
+                 });
+            }
+            function share() {
+                 window.plugins.socialsharing.share(null, null, curelemt, null);
+            }
+            function checkConnection() {
+                 var networkState = navigator.connection.type;
+                 var states = {};
+                 states[Connection.UNKNOWN]  = 'Unknown connection';
+                 states[Connection.ETHERNET] = 'Ethernet connection';
+                 states[Connection.WIFI]     = 'WiFi connection';
+                 states[Connection.CELL_2G]  = 'Cell 2G connection';
+                 states[Connection.CELL_3G]  = 'Cell 3G connection';
+                 states[Connection.CELL_4G]  = 'Cell 4G connection';
+                 states[Connection.CELL]     = 'Cell generic connection';
+                 states[Connection.NONE]     = 'No network connection';
+                 if (networkState == Connection.UNKNOWN || networkState == Connection.NONE) {
+                     showAlert($("#errorNoInternetAlertText").html(),exitapp, $("#errorNoInternetAlertTitle").html(), $("#errorNoInternetAlertButton").html());
+                 }
+                 console.log('Connection type: ' + states[networkState]);
+            }
+            function showAlert(msg, callback, title, btotxt) {
+                 navigator.notification.alert(
+                     msg, callback, title, btotxt);
+            };
+            function exitapp() {
+                 navigator.app.exitApp();
+            }
+
+            function uploadPhoto(imageURI) {
+                tolito = TolitoProgressBar('progressbar').setOuterTheme('b').setInnerTheme('e').isMini(true).setMax(100).setStartFrom(0).setInterval(50).showCounter(true).logOptions().build();
+                jQuery("#progressbar").show( 2000 );
+                var url = encodeURI("http://hashmessenger.com/api-ugly/upload.php?id=dogs");
+                var options = new FileUploadOptions();
+                options.fileKey="file";
+                options.fileName=imageURI.substr(imageURI.lastIndexOf('/')+1);
+                options.mimeType="application/octet-stream";
+                //options.chunkedMode = false;
+                options.headers = {
+                    Connection: "close"
+                };
+    
+                var ft = new FileTransfer();
+                ft.onprogress = function(progressEvent) {
+                    if (progressEvent.lengthComputable) {
+                        var perc = Math.floor(progressEvent.loaded / progressEvent.total * 100);
+                        tolito.setValue(perc);
+                    }
+                };
+                ft.upload(imageURI, url, win, fail, options);
+            }
+
+            function win(r) {
+                 showAlert($("#uglySuggest").html(),null, $("#uglySuggestTitle").html(), $("#uglySuggestButton").html());
+                 jQuery("#progressbar").hide( 2000 );
+
+            }
+
+            function fail(error) {
+                 showAlert($("#uglySuggestAlert").html(),null, $("#uglySuggestAlertTitle").html(), $("#uglySuggestAlertButton").html());
+                 jQuery("#progressbar").hide( 2000 );
+            }
+            app.initialize();
+        </script>
+    </head>
+    <body>
+    <div id='spinner'></div>
+    <div data-role="page" id="main">
+        <div data-role="header" data-position="fixed">
+            <h1><span id="title">Ugly Picture</span></h1>
+        </div>
+        <div data-role="content">
+            <div id='slider' class='swipe' >
+                <div id="swipe-wrap" class='swipe-wrap'></div>
+            </div>
+        </div>
+        <div data-role="footer" data-position="fixed" class="ui-bar"> 
+            <div id="progressbar" style="width:90%;display:none" ></div>
+            <div tyle="color:#ffffff;"><span id="mainPageDateText">Date of the picture:</span><span id="showdate"></span></div>
+            <div data-role="controlgroup" data-type="horizontal">
+	        <a href="#" id="mainPageShareButton" data-role="button" data-icon="grid">Share</a>
+	        <a href="about.html" id="mainPageInfoButton" data-rel="dialog" data-transition="flip" data-role="button" data-icon="info" data-close-btn="none">Info</a>
+	        <a href="#" id="mainPageRequestButton" data-role="button" data-icon="plus">Ugly Suggest</a>
+            <div>
+        </div>
+    </div>
+    <div style="display:none">
+    <span id="errorInternetAlertText">.</span>
+    <span id="errorInternetAlertTitle">.</span>
+    <span id="errorInternetAlertBto">.</span>
+    <span id="uglySuggestAlertTitle">.</span>
+    <span id="uglySuggestAlert">.</span>
+    <span id="uglySuggestAlertBto">.</span>
+    <span id="uglySuggest">.</span>
+    <span id="uglySuggestTitle">.</span>
+    <span id="uglySuggestBto">.</span>
+    <span id="errorNoInternetAlertText">.</span>
+    <span id="errorNoInternetAlertTitle">.</span>
+    <span id="errorNoInternetAlertBto">.</span>
+    </div>
+    </body>
+</html>
